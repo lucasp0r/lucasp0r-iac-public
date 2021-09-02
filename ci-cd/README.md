@@ -1,1 +1,1 @@
-# CI-CD Dir, POC implements, well architecture to followup etc.
+# CI-CD Dir, POC implements, well architecture to follow up etc.
