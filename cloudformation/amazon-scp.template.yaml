@@ -1,0 +1,126 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: ""
+Resources:
+  ScpPolicy1:
+    Type: "Custom::ServiceControlPolicy"
+    Properties:
+      PolicyName: "scp_account_protection"
+      PolicyDescription: "scp_account_protection"
+      PolicyContents: "{\"Version\":\"2012-10-17\",\"Statement\":[{\"NotAction\":[\"a4b:*\",\"acm:*\",\"aws-marketplace-management:*\",\"aws-marketplace:*\",\"aws-portal:*\",\"awsbillingconsole:*\",\"budgets:*\",\"ce:*\",\"chime:*\",\"cloudfront:*\",\"config:*\",\"cur:*\",\"directconnect:*\",\"ec2:DescribeRegions\",\"ec2:DescribeTransitGateways\",\"ec2:DescribeVpnGateways\",\"fms:*\",\"globalaccelerator:*\",\"health:*\",\"iam:*\",\"importexport:*\",\"kms:*\",\"mobileanalytics:*\",\"networkmanager:*\",\"organizations:*\",\"pricing:*\",\"route53:*\",\"route53domains:*\",\"s3:GetAccountPublic*\",\"s3:ListAllMyBuckets\",\"s3:PutAccountPublic*\",\"shield:*\",\"sts:*\",\"support:*\",\"trustedadvisor:*\",\"waf-regional:*\",\"waf:*\",\"wafv2:*\",\"wellarchitected:*\"],\"Resource\":\"*\",\"Effect\":\"Deny\",\"Condition\":{\"StringNotEquals\":{\"aws:RequestedRegion\":[\"us-east-1\",\"sa-east-1\"]}}},{\"Action\":\"*\",\"Resource\":\"*\",\"Effect\":\"Deny\",\"Condition\":{\"StringLike\":{\"aws:PrincipalArn\":[\"arn:aws:iam::*:root\"]}}},{\"Action\":[\"organizations:LeaveOrganization\"],\"Resource\":\"*\",\"Effect\":\"Deny\"},{\"Action\":[\"aws-portal:ModifyAccount\",\"aws-portal:ModifyBilling\",\"aws-portal:ModifyPaymentMethods\"],\"Resource\":\"*\",\"Effect\":\"Deny\"},{\"Action\":[\"organizations:LeaveOrganization\"],\"Resource\":\"*\",\"Effect\":\"Deny\"},{\"Action\":[\"aws-portal:ModifyAccount\",\"aws-portal:ModifyBilling\",\"aws-portal:ModifyPaymentMethods\"],\"Resource\":\"*\",\"Effect\":\"Deny\"}]}"
+      ServiceToken:
+        Fn::GetAtt:
+          - "ScpResourceLambda"
+          - "Arn"
+  ScpResourceLambdaRole:
+    Type: "AWS::IAM::Role"
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: "Allow"
+            Principal:
+              Service: "lambda.amazonaws.com"
+            Action:
+              - "sts:AssumeRole"
+      Path: "/"
+      ManagedPolicyArns:
+        - "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+      Policies:
+        - PolicyName: "scp-access"
+          PolicyDocument:
+            Statement:
+              - Effect: "Allow"
+                Action:
+                  - "organizations:UpdatePolicy"
+                  - "organizations:DeletePolicy"
+                  - "organizations:CreatePolicy"
+                  - "organizations:ListPolicies"
+                Resource: "*"
+  ScpResourceLambda:
+    Type: "AWS::Lambda::Function"
+    Properties:
+      Code:
+        ZipFile: "\n'use strict';\nconst AWS = require('aws-sdk');\nconst response = require('cfn-response');\nconst organizations = new AWS.Organizations({region: 'us-east-1'});\n\nexports.handler = (event, context, cb) => {\n  console.log('Invoke:', JSON.stringify(event));\n  const done = (err, data) => {\n    if (err) {\n      console.log('Error: ', err);\n      response.send(event, context, response.FAILED, {}, 'CustomResourcePhysicalID');\n    } else {\n      response.send(event, context, response.SUCCESS, {}, 'CustomResourcePhysicalID');\n    }\n  };\n  \n  const updatePolicies = (policyName, policyAction) => {\n    organizations.listPolicies({\n      Filter: \"SERVICE_CONTROL_POLICY\"\n     }, function(err, data){\n         if (err) done(err);\n         else {\n           const policy = data.Policies.filter((policy) => (policy.Name === policyName))\n           let policyId = ''\n           if (policy.length > 0) \n            policyId = policy[0].Id\n           else\n            done('policy not found')\n           if (policyAction === 'Update'){\n             organizations.updatePolicy({\n               Content: event.ResourceProperties.PolicyContents,\n               PolicyId: policyId\n             }, done)\n           }\n           else {\n              organizations.deletePolicy({\n                PolicyId: policyId\n              }, done)\n           }\n         }\n     })\n  }\n  \n  if (event.RequestType === 'Update' || event.RequestType === 'Delete') {\n    updatePolicies(event.ResourceProperties.PolicyName, event.RequestType)\n    \n  } else if (event.RequestType === 'Create') {\n    organizations.createPolicy({\n          Content: event.ResourceProperties.PolicyContents, \n          Description: event.ResourceProperties.PolicyDescription, \n          Name: event.ResourceProperties.PolicyName, \n          Type: \"SERVICE_CONTROL_POLICY\"\n         }, done);\n  } else {\n    cb(new Error('unsupported RequestType: ', event.RequestType));\n  }\n};"
+      Handler: "index.handler"
+      MemorySize: 128
+      Role:
+        Fn::GetAtt:
+          - "ScpResourceLambdaRole"
+          - "Arn"
+      Runtime: "nodejs12.x"
+      Timeout: 120
+  ScpPolicy2:
+    Type: "Custom::ServiceControlPolicy"
+    Properties:
+      PolicyName: "scp_logging_services_protection"
+      PolicyDescription: "scp_logging_services_protection"
+      PolicyContents: "{\"Version\":\"2012-10-17\",\"Statement\":[{\"Action\":[\"cloudtrail:StopLogging\",\"cloudtrail:DeleteTrail\"],\"Resource\":\"*\",\"Effect\":\"Deny\"},{\"Action\":[\"config:DeleteConfigRule\",\"config:DeleteConfigurationRecorder\",\"config:DeleteDeliveryChannel\",\"config:StopConfigurationRecorder\"],\"Resource\":\"*\",\"Effect\":\"Deny\"},{\"Action\":[\"guardduty:DeleteDetector\",\"guardduty:DeleteInvitations\",\"guardduty:DeleteIPSet\",\"guardduty:DeleteMembers\",\"guardduty:DeleteThreatIntelSet\",\"guardduty:DisassociateFromMasterAccount\",\"guardduty:DisassociateMembers\",\"guardduty:StopMonitoringMembers\",\"guardduty:UpdateDetector\"],\"Resource\":\"*\",\"Effect\":\"Deny\"},{\"Action\":[\"securityhub:DeleteInvitations\",\"securityhub:DisableSecurityHub\",\"securityhub:DisassociateFromMasterAccount\",\"securityhub:DeleteMembers\",\"securityhub:DisassociateMembers\"],\"Resource\":\"*\",\"Effect\":\"Deny\"},{\"Action\":[\"access-analyzer:DeleteAnalyzer\"],\"Resource\":\"*\",\"Effect\":\"Deny\"},{\"Action\":[\"ec2:DeleteFlowLogs\",\"logs:DeleteLogGroup\",\"logs:DeleteLogStream\"],\"Resource\":\"*\",\"Effect\":\"Deny\"}]}"
+      ServiceToken:
+        Fn::GetAtt:
+          - "ScpResourceLambda"
+          - "Arn"
+    DependsOn:
+      - "ScpPolicy1"
+  ScpPolicy3:
+    Type: "Custom::ServiceControlPolicy"
+    Properties:
+      PolicyName: "scp_network_protection"
+      PolicyDescription: "scp_network_protection"
+      PolicyContents: "{\"Version\":\"2012-10-17\",\"Statement\":[{\"Action\":[\"ec2:AttachInternetGateway\",\"ec2:CreateInternetGateway\",\"ec2:AttachEgressOnlyInternetGateway\",\"ec2:CreateVpcPeeringConnection\",\"ec2:AcceptVpcPeeringConnection\"],\"Resource\":\"*\",\"Effect\":\"Deny\"},{\"Action\":[\"globalaccelerator:Create*\",\"globalaccelerator:Update*\"],\"Resource\":\"*\",\"Effect\":\"Deny\"},{\"Action\":[\"ec2:CreateNatGateway\",\"ec2:CreateInternetGateway\",\"ec2:DeleteNatGateway\",\"ec2:AttachInternetGateway\",\"ec2:DeleteInternetGateway\",\"ec2:DetachInternetGateway\",\"ec2:CreateClientVpnRoute\",\"ec2:AttachVpnGateway\",\"ec2:DisassociateClientVpnTargetNetwork\",\"ec2:DeleteClientVpnEndpoint\",\"ec2:DeleteVpcPeeringConnection\",\"ec2:AcceptVpcPeeringConnection\",\"ec2:CreateNatGateway\",\"ec2:ModifyClientVpnEndpoint\",\"ec2:CreateVpnConnectionRoute\",\"ec2:RevokeClientVpnIngress\",\"ec2:RejectVpcPeeringConnection\",\"ec2:DetachVpnGateway\",\"ec2:DeleteVpnConnectionRoute\",\"ec2:CreateClientVpnEndpoint\",\"ec2:AuthorizeClientVpnIngress\",\"ec2:DeleteVpnGateway\",\"ec2:TerminateClientVpnConnections\",\"ec2:DeleteClientVpnRoute\",\"ec2:ModifyVpcPeeringConnectionOptions\",\"ec2:CreateVpnGateway\",\"ec2:DeleteNatGateway\",\"ec2:DeleteVpnConnection\",\"ec2:CreateVpcPeeringConnection\",\"ec2:CreateVpnConnection\"],\"Resource\":\"*\",\"Effect\":\"Deny\"},{\"Action\":[\"directconnect:CreatePrivateVirtualInterface\",\"directconnect:DeleteBGPPeer\",\"directconnect:DeleteLag\",\"directconnect:AssociateHostedConnection\",\"directconnect:CreateInterconnect\",\"directconnect:CreatePublicVirtualInterface\",\"directconnect:CreateLag\",\"directconnect:CreateDirectConnectGateway\",\"directconnect:AssociateVirtualInterface\",\"directconnect:AllocateConnectionOnInterconnect\",\"directconnect:AssociateConnectionWithLag\",\"directconnect:AllocatePrivateVirtualInterface\",\"directconnect:DeleteInterconnect\",\"directconnect:AllocateHostedConnection\",\"directconnect:DeleteDirectConnectGateway\",\"directconnect:DeleteVirtualInterface\",\"directconnect:DeleteDirectConnectGatewayAssociation\",\"directconnect:CreateDirectConnectGatewayAssociation\",\"directconnect:DeleteConnection\",\"directconnect:CreateBGPPeer\",\"directconnect:AllocatePublicVirtualInterface\",\"directconnect:CreateConnection\"],\"Resource\":\"*\",\"Effect\":\"Deny\"},{\"Action\":[\"globalaccelerator:DeleteListener\",\"globalaccelerator:DeleteAccelerator\",\"globalaccelerator:UpdateListener\",\"globalaccelerator:UpdateAccelerator\",\"globalaccelerator:CreateEndpointGroup\",\"globalaccelerator:UpdateAcceleratorAttributes\",\"globalaccelerator:UpdateEndpointGroup\",\"globalaccelerator:CreateListener\",\"globalaccelerator:CreateAccelerator\",\"globalaccelerator:DeleteEndpointGroup\"],\"Resource\":\"*\",\"Effect\":\"Deny\"}]}"
+      ServiceToken:
+        Fn::GetAtt:
+          - "ScpResourceLambda"
+          - "Arn"
+    DependsOn:
+      - "ScpPolicy2"
+  ScpPolicy4:
+    Type: "Custom::ServiceControlPolicy"
+    Properties:
+      PolicyName: "scp_iam_protection"
+      PolicyDescription: "scp_iam_protection"
+      PolicyContents: "{\"Version\":\"2012-10-17\",\"Statement\":[{\"Action\":[\"iam:CreateUser\",\"iam:CreateAccessKey\"],\"Resource\":[\"*\"],\"Effect\":\"Deny\"}]}"
+      ServiceToken:
+        Fn::GetAtt:
+          - "ScpResourceLambda"
+          - "Arn"
+    DependsOn:
+      - "ScpPolicy3"
+  ScpPolicy5:
+    Type: "Custom::ServiceControlPolicy"
+    Properties:
+      PolicyName: "scp_s3_protection"
+      PolicyDescription: "scp_s3_protection"
+      PolicyContents: "{\"Version\":\"2012-10-17\",\"Statement\":[{\"Action\":[\"s3:PutAccountPublicAccessBlock\"],\"Resource\":\"*\",\"Effect\":\"Deny\"},{\"Action\":[\"s3:PutObject\"],\"Resource\":\"*\",\"Effect\":\"Deny\",\"Condition\":{\"StringNotEquals\":{\"s3:x-amz-server-side-encryption\":\"AES256\"}}},{\"Action\":[\"s3:PutObject\"],\"Resource\":\"*\",\"Effect\":\"Deny\",\"Condition\":{\"Bool\":{\"s3:x-amz-server-side-encryption\":false}}},{\"Action\":[\"s3:DeleteBucket\",\"s3:DeleteObject\",\"s3:DeleteObjectVersion\"],\"Resource\":\"*\",\"Effect\":\"Deny\"},{\"Action\":[\"glacier:DeleteArchive\",\"glacier:DeleteVault\"],\"Resource\":\"*\",\"Effect\":\"Deny\"}]}"
+      ServiceToken:
+        Fn::GetAtt:
+          - "ScpResourceLambda"
+          - "Arn"
+    DependsOn:
+      - "ScpPolicy4"
+  ScpPolicy6:
+    Type: "Custom::ServiceControlPolicy"
+    Properties:
+      PolicyName: "scp_ec2_protection"
+      PolicyDescription: "scp_ec2_protection"
+      PolicyContents: "{\"Version\":\"2012-10-17\",\"Statement\":[{\"Action\":[\"ec2:RunInstances\"],\"Resource\":\"*\",\"Effect\":\"Deny\",\"Condition\":{\"StringNotEquals\":{\"ec2:InstanceType\":\"t3.micro\"}}},{\"Action\":[\"ec2:StopInstances\",\"ec2:TerminateInstances\"],\"Resource\":\"*\",\"Effect\":\"Deny\",\"Condition\":{\"BoolIfExists\":{\"aws:MultiFactorAuthPresent\":false}}}]}"
+      ServiceToken:
+        Fn::GetAtt:
+          - "ScpResourceLambda"
+          - "Arn"
+    DependsOn:
+      - "ScpPolicy5"
+  ScpPolicy7:
+    Type: "Custom::ServiceControlPolicy"
+    Properties:
+      PolicyName: "scp_other"
+      PolicyDescription: "scp_other"
+      PolicyContents: "{\"Version\":\"2012-10-17\",\"Statement\":[{\"Action\":[\"kms:ScheduleKeyDeletion\",\"kms:Delete*\"],\"Resource\":\"*\",\"Effect\":\"Deny\"},{\"Action\":[\"cloudwatch:DeleteAlarms\",\"cloudwatch:DeleteDashboards\",\"cloudwatch:DisableAlarmActions\",\"cloudwatch:PutDashboard\",\"cloudwatch:PutMetricAlarm\",\"cloudwatch:SetAlarmState\"],\"Resource\":\"*\",\"Effect\":\"Deny\"},{\"Action\":[\"*\"],\"Resource\":\"*\",\"Effect\":\"Deny\",\"Condition\":{\"Bool\":{\"ram:AllowsExternalPrincipals\":\"true\"}}}]}"
+      ServiceToken:
+        Fn::GetAtt:
+          - "ScpResourceLambda"
+          - "Arn"
+    DependsOn:
+      - "ScpPolicy6"
+Parameters: {}
+Metadata: {}
+Conditions: {}
