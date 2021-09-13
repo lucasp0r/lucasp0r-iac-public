@@ -1,2 +1,1 @@
-# lucasp0r-iac-public
-Repositório pessoal de IAC público 
+# Repositório pessoal de IAC público 
