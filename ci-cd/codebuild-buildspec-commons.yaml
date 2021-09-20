@@ -9,10 +9,10 @@ env:
     CLUSTER_NAME: $PROFILE/commons/microservice/codebuild:CLUSTER_NAME
     DOCKER_BASE_LAYER_REGISTRY_PREFIX: $PROFILE/commons/microservice/codebuild:DOCKER_BASE_LAYER_REGISTRY_PREFIX
     # specific module secrets
-    DOCKER_BASE_LAYER_REGISTRY_NAME: $PROFILE/commons/microservice/codebuild/customer-iam-idm-back-prv:DOCKER_BASE_LAYER_REGISTRY_NAME
-    DOCKER_BASE_LAYER_REGISTRY_VERSION: $PROFILE/commons/microservice/codebuild/customer-iam-idm-back-prv:DOCKER_BASE_LAYER_REGISTRY_VERSION
-    NAMESPACE: $PROFILE/commons/microservice/codebuild/customer-iam-idm-back-prv:NAMESPACE
-    K8S_DEPLOYMENT_NAME: $PROFILE/commons/microservice/codebuild/customer-iam-idm-back-prv:K8S_DEPLOYMENT_NAME
+    DOCKER_BASE_LAYER_REGISTRY_NAME: $PROFILE/commons/microservice/codebuild/customer:DOCKER_BASE_LAYER_REGISTRY_NAME
+    DOCKER_BASE_LAYER_REGISTRY_VERSION: $PROFILE/commons/microservice/codebuild/customer:DOCKER_BASE_LAYER_REGISTRY_VERSION
+    NAMESPACE: $PROFILE/commons/microservice/codebuild/customer:NAMESPACE
+    K8S_DEPLOYMENT_NAME: $PROFILE/commons/microservice/codebuild/customer:K8S_DEPLOYMENT_NAME
     
 phases:
   install:
