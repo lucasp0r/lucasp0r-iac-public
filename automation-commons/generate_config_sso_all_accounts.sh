@@ -1,10 +1,10 @@
 #!/bin/bash
 
 # Shell script responsável configurar o sso para todas cloud accounts
-# Para funcionamento a conta deve ter apenas um sso configurado Payer Account
+# Para funcionamento a conta deve ter apenas um sso configurado Master Account
 # 
 
-#./generate_data_all_accounts_user.sh <profile zuphub-payer>
+#./generate_data_all_accounts_user.sh <profile masterr>
 
 echo ""
 echo "#############################################"
