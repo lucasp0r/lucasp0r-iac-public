@@ -23,7 +23,7 @@ mkdir -p resultado/vpc
 
 aws organizations list-accounts --profile $PROFILE_PAYER_ACCOUNT --output json > resultado/aws_accounts.json
 
-ACCOUNTS_ARRAY=("transit-dev" "transit-qa" "transit-sandbox" "transit-prod" "Audit" "Log Archive" "Master" "orange-dns-prd")
+ACCOUNTS_ARRAY=("Audit","Log-Archive")
 
 jq -c '.Accounts[]' resultado/aws_accounts.json | while read item; do
 
