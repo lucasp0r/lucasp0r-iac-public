@@ -5,159 +5,40 @@ on:
     branches: [main]
 
 jobs:
-  # Execução Terraform
   kics-job-tf:
     runs-on: ubuntu-latest
-    name: kics-action-tf
+    name: kics-action
     steps:
       - name: Checkout repo terraform
         uses: actions/checkout@v2
-      - name: Mkdir results-dir-tf
+      - name: Mkdir results-dir
         # make sure results dir is created
-        run: mkdir -p results-dir-tf
+        run: mkdir -p results-dir
       - name: Create config file
         # creating a heredoc config file
         run: |
           cat <<EOF >>kics.config
           {
-            "exclude-categories": "Encryption",
             "log-file": true,
             "minimal-ui": false,
             "no-color": false,
             "no-progress": true,
-            "output-path": "./results-dir-tf",
+            "output-path": "./results-dir",
             "payload-path": "file path to store source internal representation in JSON format",
             "preview-lines": 5,
             "report-formats": "json,sarif",
-            "type": "Terraform",
+            "type": "Terraform,Kubernetes,CloudFormation,Dockerfile",
             "verbose": true
           }
           EOF
       - name: Run KICS Scan using config
         uses: checkmarx/kics-action@v1.2
         with:
-          path: 'terraform/'
+          path: '/*'
           ignore_on_exit: results
           config_path: ./kics.config
-      #- name: Upload SARIF file
-        #uses: github/codeql-action/upload-sarif@v1
-       # with:
-          #sarif_file: results-dir-tf/results.sarif
-  # Execução K8s
-  kics-job-k8s:
-    runs-on: ubuntu-latest
-    name: kics-action-k8s
-    steps:
-      - name: Checkout repo terraform
-        uses: actions/checkout@v2
-      - name: Mkdir results-dir-k8s
-        # make sure results dir is created
-        run: mkdir -p results-dir-k8s
-      - name: Create config file
-        # creating a heredoc config file
-        run: |
-          cat <<EOF >>kics.config
-          {
-            "exclude-categories": "Encryption",
-            "log-file": true,
-            "minimal-ui": false,
-            "no-color": false,
-            "no-progress": true,
-            "output-path": "./results-dir-k8s",
-            "payload-path": "file path to store source internal representation in JSON format",
-            "preview-lines": 5,
-            "report-formats": "json,sarif",
-            "type": "Kubernetes",
-            "verbose": true
-          }
-          EOF
-      - name: Run KICS Scan using config
-        uses: checkmarx/kics-action@v1.2
-        with:
-          path: 'k8s-and-helms/'
-          config_path: ./kics.config
-          ignore_on_exit: results
-      #- name: Upload SARIF file
-        #uses: github/codeql-action/upload-sarif@v1
-        #with:
-          #sarif_file: results-dir-k8s/results.sarif
-      
-  # Execução Docker
-  kics-job-docker:
-    runs-on: ubuntu-latest
-    name: kics-action-docker
-    steps:
-      - name: Checkout repo terraform
-        uses: actions/checkout@v2
-      - name: Mkdir results-dir-docker
-        # make sure results dir is created
-        run: mkdir -p results-dir-docker
-      - name: Create config file
-        # creating a heredoc config file
-        run: |
-          cat <<EOF >>kics.config
-          {
-            "exclude-categories": "Encryption",
-            "log-file": true,
-            "minimal-ui": false,
-            "no-color": false,
-            "no-progress": true,
-            "output-path": "./results-dir-docker",
-            "payload-path": "file path to store source internal representation in JSON format",
-            "preview-lines": 5,
-            "report-formats": "json,sarif",
-            "type": "Dockerfile",
-            "verbose": true
-          }
-
-          EOF
-      - name: Run KICS Scan using config
-        uses: checkmarx/kics-action@v1.2
-        with:
-          path: 'docker/'
-          config_path: ./kics.config
-      #- name: Upload SARIF file
-        #uses: github/codeql-action/upload-sarif@v1
-        #with:
-          #sarif_file: results-dir-docker/results.sarif
-  # Execução CF    
-  kics-job-cf:
-    runs-on: ubuntu-latest
-    name: kics-action-cf
-    steps:
-      - name: Checkout repo terraform
-        uses: actions/checkout@v2
-      - name: Mkdir results-dir-cf
-        # make sure results dir is created
-        run: mkdir -p results-dir-cf
-      - name: Create config file
-        # creating a heredoc config file
-        run: |
-          cat <<EOF >>kics.config
-          {
-            "exclude-categories": "Encryption",
-            "log-file": true,
-            "minimal-ui": false,
-            "no-color": false,
-            "no-progress": true,
-            "output-path": "./results-dir-cf",
-            "payload-path": "file path to store source internal representation in JSON format",
-            "preview-lines": 5,
-            "report-formats": "json,sarif",
-            "type": "CloudFormation",
-            "verbose": true
-          }
-
-          EOF
-      - name: Run KICS Scan using config
-        uses: checkmarx/kics-action@v1.2
-        with:
-          path: 'cloudformation/'
-          config_path: ./kics.config
-          ignore_on_exit: results
       - name: Upload SARIF file
         uses: github/codeql-action/upload-sarif@v1
         with:
-          sarif_file: results-dir-cf/results.sarif
-    
- 
+          sarif_file: results-dir/results.sarif
+  
