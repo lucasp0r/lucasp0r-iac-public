@@ -36,7 +36,7 @@ jobs:
       - name: Run KICS Scan using config
         uses: checkmarx/kics-action@v1.2
         with:
-          path: 'terraform/'
+          path: 'terraform/*'
           ignore_on_exit: results
           config_path: ./kics.config
       - name: Upload SARIF file
@@ -74,13 +74,13 @@ jobs:
       - name: Run KICS Scan using config
         uses: checkmarx/kics-action@v1.2
         with:
-          path: 'k8s-and-helms/'
+          path: 'k8s-and-helms/*'
           config_path: ./kics.config
           ignore_on_exit: results
-      - name: Upload JSON file
-        uses: github/codeql-action/upload-json@v1
+      - name: Upload SARIF file
+        uses: github/codeql-action/upload-sarif@v1
         with:
-          sarif_file: results-dir-k8s/results.json
+          sarif_file: results-dir-k8s/results.sarif
       
   # Execução Docker
   kics-job-docker:
@@ -113,12 +113,12 @@ jobs:
       - name: Run KICS Scan using config
         uses: checkmarx/kics-action@v1.2
         with:
-          path: 'docker/'
+          path: 'docker/*'
           config_path: ./kics.config
-      - name: Upload JSON file
-        uses: github/codeql-action/upload-json@v1
+      - name: Upload SARIF file
+        uses: github/codeql-action/upload-sarif@v1
         with:
-          sarif_file: results-dir-docker/results.json
+          sarif_file: results-dir-docker/results.sarif
   # Execução CF    
   kics-job-cf:
     runs-on: ubuntu-latest
@@ -150,7 +150,7 @@ jobs:
       - name: Run KICS Scan using config
         uses: checkmarx/kics-action@v1.2
         with:
-          path: 'cloudformation/'
+          path: 'cloudformation/*'
           config_path: ./kics.config
           ignore_on_exit: results
       - name: Upload SARIF file
