@@ -37,6 +37,7 @@ jobs:
         uses: checkmarx/kics-action@v1.2
         with:
           path: 'terraform/'
+          ignore_on_exit: results
           config_path: ./kics.config
       - name: Upload SARIF file
         uses: github/codeql-action/upload-sarif@v1
@@ -75,6 +76,7 @@ jobs:
         with:
           path: 'k8s-and-helms/'
           config_path: ./kics.config
+          ignore_on_exit: results
       - name: Upload SARIF file
         uses: github/codeql-action/upload-sarif@v1
         with:
@@ -152,6 +154,7 @@ jobs:
         with:
           path: 'cloudformation/'
           config_path: ./kics.config
+          ignore_on_exit: results
       - name: Upload SARIF file
         uses: github/codeql-action/upload-sarif@v1
         with:
