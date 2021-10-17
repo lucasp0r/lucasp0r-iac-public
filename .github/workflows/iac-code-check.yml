@@ -6,9 +6,9 @@ on:
 
 jobs:
   # Execução Terraform
-  kics-job:
+  kics-job-tf:
     runs-on: ubuntu-latest
-    name: kics-action
+    name: kics-action-tf
     steps:
       - name: Checkout repo terraform
         uses: actions/checkout@v2
