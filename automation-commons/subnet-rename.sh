@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Shell script para realizar o rename das subnet da orange para um determinado padrão.
+# Shell script para realizar o rename das subnet para um determinado padrão.
 # 
 
 #./execute.sh <profile r> <sso_profile> <padrao-subnet-private> <padrao-subnet-publica>
@@ -15,14 +15,15 @@ STARTTIME=$(date +%s)
 
 PROFILE_PAYER_ACCOUNT=$1
 SSO_PROFILE=$2
-# SSO_PROFILE="SecGovSuportAdmins"
+SSO_START_URL=$3
+
 
 mkdir resultado
 mkdir -p resultado/vpc
 
 aws organizations list-accounts --profile $PROFILE_PAYER_ACCOUNT --output json > resultado/aws_accounts.json
 
-ACCOUNTS_ARRAY=("transit-dev" "transit-qa" "transit-sandbox" "transit-prod" "Audit" "Log Archive" "Master" "Dns")
+ACCOUNTS_ARRAY=("Audit" "Log Archive" "Master")
 
 jq -c '.Accounts[]' resultado/aws_accounts.json | while read item; do
 
@@ -39,7 +40,7 @@ jq -c '.Accounts[]' resultado/aws_accounts.json | while read item; do
         echo
 
         echo "[profile $ACCOUNT_NAME]" >> ~/.aws/config
-        echo "sso_start_url = https://d-90676779f6.awsapps.com/start#/" >> ~/.aws/config
+        echo "sso_start_url = ${SSO_START_URL}" >> ~/.aws/config
 
         if [[ $ACCOUNT_NAME == *"prd"* || $ACCOUNT_NAME == *"prod"* ]]; then
             echo "region = sa-east-1" >> ~/.aws/config
