@@ -2,7 +2,7 @@ name: scan with KICS using config file
 
 on:
   push:
-    branches: [master]
+    branches: [main]
 
 jobs:
   kics-job:
