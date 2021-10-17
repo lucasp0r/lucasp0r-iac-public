@@ -20,7 +20,6 @@ jobs:
           cat <<EOF >>kics.config
           {
             "exclude-categories": "Encryption",
-            "exclude-paths": "terraform/gcp/big_data.tf,terraform/gcp/gcs.tf",
             "log-file": true,
             "minimal-ui": false,
             "no-color": false,
@@ -29,46 +28,18 @@ jobs:
             "payload-path": "file path to store source internal representation in JSON format",
             "preview-lines": 5,
             "report-formats": "json,sarif",
-            "type": "terraform",
+            "type": "terraform/main.tf,Dockerfile,Helm,CloudFormation",
             "verbose": true
           }
           EOF
       - name: Run KICS Scan using config
         uses: checkmarx/kics-action@v1.2
         with:
-          path: 'terraform'
+          path: '/'
           config_path: ./kics.config
       - name: Upload SARIF file
         uses: github/codeql-action/upload-sarif@v1
         with:
           sarif_file: results-dir/results.sarif
     
-      ## Next Execution Helm and K8s ##
-
-      - name: Checkout repo Helm
-        uses: actions/checkout@v2
-      - name: Mkdir results-dir
-        # make sure results dir is created
-        run: mkdir -p results-dir
-      - name: Create config file
-        # creating a heredoc config file
-        run: |
-          cat <<EOF >>kics.config
-          {
-            "path": "k8s-and-helms/",
-            "verbose": true,
-            "log-file": true,
-            "type": "Helm,Kubernetes",
-            "queries-path": "k8s-and-helms/",
-            "output-path": "results"
-          }
-          EOF
-      - name: Run KICS Scan using config
-        uses: checkmarx/kics-action@v1.2
-        with:
-          path: 'k8s-and-helms'
-          config_path: ./kics.config
-      - name: Upload SARIF file
-        uses: github/codeql-action/upload-sarif@v1
-        with:
-          sarif_file: results-dir/results.sarif          
+ 
