@@ -3,7 +3,7 @@
 # Shell script para realizar o rename das subnet da orange para um determinado padrão.
 # 
 
-#./execute.sh <profile orange-master> <sso_profile> <TAG_NAME> <TAG_VALUE>
+#./execute.sh <profile> <sso_profile> <TAG_NAME> <TAG_VALUE>
 
 
 echo ""
