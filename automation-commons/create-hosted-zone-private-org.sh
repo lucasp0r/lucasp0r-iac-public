@@ -21,6 +21,14 @@ mkdir resultado
 
 PROFILE_HUB_MASTER_ACCOUNT=$1
 PROFILE_HUB_TRANSIT=$2
+VPC_CENTRAL_QA=$3
+DOMINIO_BASE_QA=$4
+VPC_CENTRAL_DEV=$5
+DOMINIO_BASE_DEV=$6
+VPC_CENTRAL_PRD=$7
+DOMINIO_BASE_PRD=$8
+VPC_CENTRAL_SBOX=$9
+DOMINIO_BASE_SBOX=$10
 
 aws organizations list-accounts --profile $PROFILE_HUB_MASTER_ACCOUNT --output json > resultado/hub_organization.json
 
@@ -62,28 +70,28 @@ jq -c '.Accounts[]' resultado/hub_organization.json | while read item; do
         REGIAO=""
 
         if [[ "$ACCOUNT_NAME" == *"dev" || "$ACCOUNT_NAME" == *"lab" || "$ACCOUNT_NAME" == *"sandbox"* ]]; then
-            DOMINIO_BASE=dev..corp
-            VPC_CENTRAL=vpc-07bffcbcf0d8d9ca1
+            DOMINIO_BASE=${DOMINIO_BASE_DEV}
+            VPC_CENTRAL=${VPC_CENTRAL_DEV}
             REGIAO=us-east-1
         
         elif [[ "$ACCOUNT_NAME" == *"qa" || "$ACCOUNT_NAME" == *"staging"* || "$ACCOUNT_NAME" == *"stg" || "$ACCOUNT_NAME" == *"poc" ]]; then
-            DOMINIO_BASE=qa..corp
-            VPC_CENTRAL=vpc-07bffcbcf0d8d9ca1
+            DOMINIO_BASE=${DOMINIO_BASE_QA}
+            VPC_CENTRAL=${VPC_CENTRAL_QA}
             REGIAO=us-east-1
 
         elif [[ "$ACCOUNT_NAME" == *"-products"* && ( "$ACCOUNT_NAME" == *"prd"* || "$ACCOUNT_NAME" == *"prod" ) ]]; then
-            DOMINIO_BASE=prd..corp
-            VPC_CENTRAL=vpc-0c74d270be4a0460a
+            DOMINIO_BASE=${DOMINIO_BASE_PRD}
+            VPC_CENTRAL=${VPC_CENTRAL_PRD}
             REGIAO=sa-east-1
 
         elif [[ "$ACCOUNT_NAME" == *"-prod"* && ( "$ACCOUNT_NAME" == *"prd"* || "$ACCOUNT_NAME" == *"prod"* ) ]]; then
-            DOMINIO_BASE=prd..corp
-            VPC_CENTRAL=vpc-0c74d270be4a0460a
+            DOMINIO_BASE=${DOMINIO_BASE_PRD}
+            VPC_CENTRAL=${VPC_CENTRAL_PRD}
             REGIAO=sa-east-1 
 
         elif [[ "$ACCOUNT_NAME" == *"prd"* || "$ACCOUNT_NAME" == *"prod"* ]]; then
-            DOMINIO_BASE=prd..corp
-            VPC_CENTRAL=vpc-0c74d270be4a0460a
+            DOMINIO_BASE=${DOMINIO_BASE_PRD}
+            VPC_CENTRAL=${VPC_CENTRAL_PRD}
             REGIAO=sa-east-1         
         fi        
 
