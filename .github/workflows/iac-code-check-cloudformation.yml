@@ -1,4 +1,4 @@
-name: scan with KICS using config file
+name: scan Cloudformation
 
 on:
   push:
