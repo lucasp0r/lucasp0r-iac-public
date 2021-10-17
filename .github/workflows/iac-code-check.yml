@@ -1,7 +1,7 @@
 name: scan with KICS using config file
 
 on:
-  pull_request:
+  push:
     branches: [master]
 
 jobs:
