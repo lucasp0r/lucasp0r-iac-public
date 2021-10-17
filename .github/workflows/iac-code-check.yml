@@ -34,7 +34,7 @@ jobs:
       - name: Run KICS Scan using config
         uses: checkmarx/kics-action@v1.2
         with:
-          path: '/*'
+          path: 'terraform/*,cloudformation/*,docker/*,k8s-and-helms/*'
           ignore_on_exit: results
           config_path: ./kics.config
       - name: Upload SARIF file
