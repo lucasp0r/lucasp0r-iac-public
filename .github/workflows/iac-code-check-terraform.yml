@@ -28,7 +28,7 @@ jobs:
             "payload-path": "file path to store source internal representation in JSON format",
             "preview-lines": 5,
             "report-formats": "json,sarif",
-            "type": "Ansible,AzureResourceManager,CloudFormation,Dockerfile,Kubernetes,,Terraform",
+            "type": "Terraform",
             "verbose": true
           }
 
@@ -36,7 +36,7 @@ jobs:
       - name: Run KICS Scan using config
         uses: checkmarx/kics-action@v1.2
         with:
-          path: 'terraform/cloudformation/,docker/,k8s-and-helms/'
+          path: 'terraform'
           config_path: ./kics.config
       - name: Upload SARIF file
         uses: github/codeql-action/upload-sarif@v1
