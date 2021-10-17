@@ -1,15 +1,15 @@
 name: scan with KICS using config file
 
 on:
-  push:
-    branches: [main]
+  pull_request:
+    branches: [master]
 
 jobs:
   kics-job:
     runs-on: ubuntu-latest
     name: kics-action
     steps:
-      - name: Checkout repo
+      - name: Checkout repo terraform
         uses: actions/checkout@v2
       - name: Mkdir results-dir
         # make sure results dir is created
@@ -34,7 +34,7 @@ jobs:
           }
           EOF
       - name: Run KICS Scan using config
-        uses: checkmarx/kics-action@latest
+        uses: checkmarx/kics-action@v1.2
         with:
           path: 'terraform'
           config_path: ./kics.config
@@ -42,3 +42,33 @@ jobs:
         uses: github/codeql-action/upload-sarif@v1
         with:
           sarif_file: results-dir/results.sarif
+    
+      ## Next Execution Helm and K8s ##
+
+      - name: Checkout repo Helm
+        uses: actions/checkout@v2
+      - name: Mkdir results-dir
+        # make sure results dir is created
+        run: mkdir -p results-dir
+      - name: Create config file
+        # creating a heredoc config file
+        run: |
+          cat <<EOF >>kics.config
+          {
+            "path": "k8s-and-helms/",
+            "verbose": true,
+            "log-file": true,
+            "type": "Helm,Kubernetes",
+            "queries-path": "k8s-and-helms/",
+            "output-path": "results"
+          }
+          EOF
+      - name: Run KICS Scan using config
+        uses: checkmarx/kics-action@v1.2
+        with:
+          path: 'k8s-and-helms'
+          config_path: ./kics.config
+      - name: Upload SARIF file
+        uses: github/codeql-action/upload-sarif@v1
+        with:
+          sarif_file: results-dir/results.sarif          
