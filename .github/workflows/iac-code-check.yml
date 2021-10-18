@@ -48,7 +48,7 @@ jobs:
     runs-on: ubuntu-latest
     name: kics-action-k8s
     steps:
-      - name: Checkout repo terraform
+      - name: Checkout repo k8s
         uses: actions/checkout@v2
       - name: Mkdir results-dir-k8s
         # make sure results dir is created
@@ -87,7 +87,7 @@ jobs:
     runs-on: ubuntu-latest
     name: kics-action-docker
     steps:
-      - name: Checkout repo terraform
+      - name: Checkout repo docker
         uses: actions/checkout@v2
       - name: Mkdir results-dir-docker
         # make sure results dir is created
@@ -124,7 +124,7 @@ jobs:
     runs-on: ubuntu-latest
     name: kics-action-cf
     steps:
-      - name: Checkout repo terraform
+      - name: Checkout repo cf
         uses: actions/checkout@v2
       - name: Mkdir results-dir-cf
         # make sure results dir is created
