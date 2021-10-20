@@ -31,7 +31,7 @@ module "eks" {
 For more advanced uses, we recommend that you construct and configure
 your clusters using the submodules.
 
-[see example](https://github.com/lucasp0r-iac-public/terraform/terraform-sample-eks/blob/main/examples/cluster/main.tf)
+[see example](https://github.com/lucasp0r/lucasp0r-iac-public/tree/main/terraform/terraform-sample-eks/modules/cluster/main.tf)
 
 This allows for much more flexibility, in order to for example:
 
@@ -65,7 +65,7 @@ provider "aws" {
 }
 ```
 
-[see an example role here](https://github.com/cookpad/terraform-aws-eks/blob/main/examples/iam_permissions/main.tf)
+[see an example role here](https://github.com/lucasp0r/lucasp0r-iac-public/blob/main/terraform/terraform-sample-eks/examples/iam_permissions/main.tf)
 
 Without this you may encounter difficulties applying kubernetes manifests to
 the cluster.
