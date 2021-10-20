@@ -4,8 +4,6 @@
 
 This repository demonstrates a possible GitOps workflow using [Argo CD](https://argoproj.github.io/projects/argo-cd) and [Tekton](https://tekton.dev). We are using Argo CD to setup our Kubernetes clusters `dev` and `prod` (in the following we will only use the `dev` cluster) and Tekton to build and update our example application.
 
-![GitOps](./assets/gitops.png)
-
 ## Argo CD
 
 In the first step we are creating a new Kubernetes cluster using Minikube and we enable the NGINX Ingress controller:
