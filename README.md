@@ -12,3 +12,7 @@
 - [`CloudFormation Stack & StackSets`](https://github.com/lucasp0r/lucasp0r-iac-public/tree/main/cloudformation)
 
 - [`Terraform`](https://github.com/lucasp0r/lucasp0r-iac-public/tree/main/terraform)
+
+- [`GitOps`](https://github.com/lucasp0r/lucasp0r-iac-public/tree/main/gitops)
+
+- [`Serverless`](https://github.com/lucasp0r/lucasp0r-iac-public/tree/main/serverless)
