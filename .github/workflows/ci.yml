@@ -1,3 +1,4 @@
+name: CI - Terraform provision
 
 on:
   pull_request:
