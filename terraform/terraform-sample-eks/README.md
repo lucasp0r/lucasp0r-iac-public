@@ -1,6 +1,6 @@
 # Terraform EKS Module
 
-![.github/workflows/ci.yml](https://github.com/lucasp0r-iac-public/terraform/terraform-sample-eks/workflows/.github/workflows/ci.yml/badge.svg)
+![.github/workflows/ci.yml](https://github.com/lucasp0r/lucasp0r-iac-public/blob/main/.github/workflows/ci.yml)
 
 This repo contains a set of Terraform modules that can be used to provision
 an Elastic Kubernetes (EKS) cluster on AWS.
