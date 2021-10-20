@@ -14,19 +14,19 @@ echo ""
 echo ""
 
 ################################################################################
-# GERANDO ARQUIVO DE USUÁRIOS AIM EXISTENTES
+# GERANDO ARQUIVO DE USUÁRIOS IAM EXISTENTES
 ################################################################################
 
 mkdir resultado
 
-aws configservice list-aggregate-discovered-resources --resource-type AWS::IAM::User --filter Region=sa-east-1 --configuration-aggregator-name -org-all-accounts --profile $1 --output json > resultado/zuphub-users.json
+aws configservice list-aggregate-discovered-resources --resource-type AWS::IAM::User --filter Region=sa-east-1 --configuration-aggregator-name -org-all-accounts --profile $1 --output json > resultado/hub-users.json
 
 ACCOUNTS_ARRAY=()
 
 ### Criando HEAD CSV
 echo "AWS Account, Nome AWS Account, Usuário, Data de criação, Último Acesso (console), Acess Key 01, Acess Key 01 - Data última utilização, Acess Key 02, Acess Key 02 - Data última utilização" >> resultado.csv
 
-jq -c '.ResourceIdentifiers[]' resultado/zuphub-users.json | while read item; do
+jq -c '.ResourceIdentifiers[]' resultado/hub-users.json | while read item; do
     SourceAccountId=$(echo $item | jq '.SourceAccountId')
     ResourceName=$(echo $item | jq '.ResourceName' | tr -d \")
     if [[ ! " ${ACCOUNTS_ARRAY[@]} " =~ " ${SourceAccountId} " ]]; then
