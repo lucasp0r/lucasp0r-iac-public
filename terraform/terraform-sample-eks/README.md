@@ -1,5 +1,6 @@
 # Terraform EKS Module
 
+# This TF can be executed automaticly by:
 ![.github/workflows/ci.yml](https://github.com/lucasp0r/lucasp0r-iac-public/blob/main/.github/workflows/ci.yml)
 
 This repo contains a set of Terraform modules that can be used to provision
