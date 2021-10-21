@@ -27,7 +27,7 @@ variable "zone_awareness" {
 
 variable "root_volume_size" {
   type        = number
-  default     = 40
+  default     = 20 
   description = "Volume size for the root partition. Value in GiB."
 }
 
@@ -45,7 +45,7 @@ variable "min_size" {
 
 variable "instance_size" {
   type        = string
-  default     = "large"
+  default     = "medium"
   description = "The size of instances in this node group"
 }
 
