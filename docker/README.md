@@ -1,4 +1,6 @@
-# DocPad Dockerfile
+## Docker Samples 
+
+## DocPad Dockerfile
 
 [Docker](http://docker.com) container to use [DocPad](http://docpad.org).
 
