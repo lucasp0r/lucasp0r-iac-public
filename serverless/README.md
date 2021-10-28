@@ -1,4 +1,4 @@
-# POC in Development #
+# Learning about SAM (using workshop AWS) #
 
 
 [![Serverless Application Framework AWS Lambda API Gateway](https://s3.amazonaws.com/assets.github.serverless/readme-serverless-framework.gif)](https://serverless.com)
