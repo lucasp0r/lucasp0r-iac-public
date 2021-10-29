@@ -11,6 +11,8 @@
 
 - [`Terraform`](https://github.com/lucasp0r/lucasp0r-iac-public/tree/main/terraform)
 
+- [`Lambda`](https://github.com/lucasp0r/lucasp0r-iac-public/tree/main/lambda)
+
 - [`GitOps`](https://github.com/lucasp0r/lucasp0r-iac-public/tree/main/gitops)
 
 - [`Serverless`](https://github.com/lucasp0r/lucasp0r-iac-public/tree/main/serverless)
