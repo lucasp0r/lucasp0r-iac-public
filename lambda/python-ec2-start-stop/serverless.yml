@@ -34,7 +34,7 @@ functions:
     handler: handler.start_ec2
     timeout: 60
     events:
-      - schedule: cron(0 13 * * ? *) # run at 1 PM UTC every day (9 am EST)
+      - schedule: cron(0 09 * * ? *) # run at 1 PM UTC every day (9 am EST)
   stop-ec2:
     handler: handler.stop_ec2
     timeout: 60
