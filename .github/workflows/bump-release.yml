@@ -1,0 +1,47 @@
+name: Create Release and Tag
+on:
+  push:
+    branches:
+      - master
+      
+jobs:
+  github-tag-release:
+    permissions:
+      contents: write    
+    runs-on: ubuntu-latest
+    steps:
+
+      - name: Checkout Repo
+        uses: actions/checkout@v2
+        
+      - run: |
+          git fetch --unshallow --tags
+
+      - name: 'Get Previous Tag'
+        id: previous-tag
+        run: |
+          LATEST_TAG=$(git describe --abbrev=0 --tags)
+          echo $LATEST_TAG
+          sed -i 's/x.x.x/'$LATEST_TAG'/g' scripts/git-tag.sh
+
+      - name: Automating Tagging of Releases.
+        id: increment-git-tag
+        run: |
+          chmod 700 scripts/git-tag.sh
+          ./scripts/git-tag.sh -v minor
+        shell: bash        
+
+      - name: Packaging Artifact
+        uses: thedoctor0/zip-release@main
+        with:
+          filename: lucasp0r-iac-public.zip
+
+      - uses: release-drafter/release-drafter@master
+        id: auto-release-notes
+        with:
+          tag: "${{ steps.increment-git-tag.outputs.git-tag }}"
+          publish: true
+          prerelease: false
+          config-name: release.yml
+        env:
+          GITHUB_TOKEN: ${{ secrets.AUTOMATION_GITHUB_TOKEN }}
