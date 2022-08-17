@@ -5,6 +5,7 @@ Terraform Best Practices for AWS users.
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 
+  - [Use recomended modules in AWS Terraform](#https://github.com/terraform-aws-modules)
   - [Run terraform command with var-file](#run-terraform-command-with-var-file)
   - [Enable version control on terraform state files bucket](#enable-version-control-on-terraform-state-files-bucket)
   - [Manage S3 backend for tfstate files](#manage-s3-backend-for-tfstate-files)
