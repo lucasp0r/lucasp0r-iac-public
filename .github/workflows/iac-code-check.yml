@@ -39,10 +39,10 @@ jobs:
           path: 'terraform/*'
           ignore_on_exit: results
           config_path: ./kics.config
-      - name: Upload SARIF file
-        uses: github/codeql-action/upload-sarif@v1
-        with:
-          sarif_file: results-dir-tf/results.sarif
+      # - name: Upload SARIF file
+      #   uses: github/codeql-action/upload-sarif@v2
+      #   with:
+      #     sarif_file: results-dir-tf/results.sarif
   # Execução K8s
   kics-job-k8s:
     runs-on: ubuntu-latest
@@ -77,10 +77,10 @@ jobs:
           path: 'k8s-and-helms/*'
           config_path: ./kics.config
           ignore_on_exit: results
-      - name: Upload SARIF file
-        uses: github/codeql-action/upload-sarif@v1
-        with:
-          sarif_file: results-dir-k8s/results.sarif
+      # - name: Upload SARIF file
+      #   uses: github/codeql-action/upload-sarif@v2
+      #   with:
+      #     sarif_file: results-dir-k8s/results.sarif
       
   # Execução Docker
   kics-job-docker:
@@ -115,10 +115,10 @@ jobs:
         with:
           path: 'docker/*'
           config_path: ./kics.config
-      - name: Upload SARIF file
-        uses: github/codeql-action/upload-sarif@v1
-        with:
-          sarif_file: results-dir-docker/results.sarif
+      # - name: Upload SARIF file
+      #   uses: github/codeql-action/upload-sarif@v2
+      #   with:
+      #     sarif_file: results-dir-docker/results.sarif
   # Execução CF    
   kics-job-cf:
     runs-on: ubuntu-latest
@@ -153,9 +153,9 @@ jobs:
           path: 'cloudformation/*'
           config_path: ./kics.config
           ignore_on_exit: results
-      - name: Upload SARIF file
-        uses: github/codeql-action/upload-sarif@v1
-        with:
-          sarif_file: results-dir-cf/results.sarif
+      # - name: Upload SARIF file
+      #   uses: github/codeql-action/upload-sarif@v2
+      #   with:
+      #     sarif_file: results-dir-cf/results.sarif
     
  
