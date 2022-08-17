@@ -1,36 +1,37 @@
-name: CI - Terraform provision
+name: CI - Terraform provision 
 
 on:
-  pull_request:
-    paths-ignore:
-      - '*.md'
-      - 'terraform/terraform-sample-eks/docs/**'
-      - 'terraform/terraform-sample-eks/*.md'
-      - 'serverless/'
-      - k8s-and-helms/
-      - 'gitops/'
-      - 'docker/'
-      - 'cloudformation/'
-      - 'ci-cd/'
-      - 'automation-commons/'
+  workflow_dispatch:
+  # pull_request:
+  #   paths-ignore:
+  #     - '*.md'
+  #     - 'terraform/terraform-sample-eks/docs/**'
+  #     - 'terraform/terraform-sample-eks/*.md'
+  #     - 'serverless/'
+  #     - k8s-and-helms/
+  #     - 'gitops/'
+  #     - 'docker/'
+  #     - 'cloudformation/'
+  #     - 'ci-cd/'
+  #     - 'automation-commons/'
 
-  push:
-    paths-ignore:
-      - '*.md'
-      - 'terraform/terraform-sample-eks/docs/**'
-      - 'terraform/terraform-sample-eks/*.md'
-      - 'serverless/'
-      - k8s-and-helms/
-      - 'gitops/'
-      - 'docker/'
-      - 'cloudformation/'
-      - 'ci-cd/'
-      - 'automation-commons/'
-    branches:
-      - main
-      - release-*
-  schedule:
-    - cron: "0 11 * * 1-5"
+  # push:
+  #   paths-ignore:
+  #     - '*.md'
+  #     - 'terraform/terraform-sample-eks/docs/**'
+  #     - 'terraform/terraform-sample-eks/*.md'
+  #     - 'serverless/'
+  #     - k8s-and-helms/
+  #     - 'gitops/'
+  #     - 'docker/'
+  #     - 'cloudformation/'
+  #     - 'ci-cd/'
+  #     - 'automation-commons/'
+  #   branches:
+  #     - main
+  #     - release-*
+  # schedule:
+  #   - cron: "0 11 * * 1-5"
 jobs:
   lint:
     name: Linting
