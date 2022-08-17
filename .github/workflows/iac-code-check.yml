@@ -34,7 +34,7 @@ jobs:
           }
           EOF
       - name: Run KICS Scan using config
-        uses: checkmarx/kics-action@v1.2
+        uses: checkmarx/kics-action@v1.5
         with:
           path: 'terraform/*'
           ignore_on_exit: results
@@ -72,7 +72,7 @@ jobs:
           }
           EOF
       - name: Run KICS Scan using config
-        uses: checkmarx/kics-action@v1.2
+        uses: checkmarx/kics-action@v1.5
         with:
           path: 'k8s-and-helms/*'
           config_path: ./kics.config
@@ -111,7 +111,7 @@ jobs:
           }
           EOF
       - name: Run KICS Scan using config
-        uses: checkmarx/kics-action@v1.2
+        uses: checkmarx/kics-action@v1.5
         with:
           path: 'docker/*'
           config_path: ./kics.config
@@ -148,7 +148,7 @@ jobs:
           }
           EOF
       - name: Run KICS Scan using config
-        uses: checkmarx/kics-action@v1.2
+        uses: checkmarx/kics-action@v1.5
         with:
           path: 'cloudformation/*'
           config_path: ./kics.config
