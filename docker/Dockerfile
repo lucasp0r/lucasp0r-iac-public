@@ -15,4 +15,5 @@ COPY /target/spring-project.jar spring-project.jar
 RUN addgroup -S xyzgroup && adduser -S -D -h /spring-project appuser xyzgroup && chown -R appuser:xyzgroup /spring-project/*
 USER appuser
 EXPOSE 8080
+HEALTHCHECK --interval=5s --timeout=3s CMD curl --fail http://localhost:8080
 ENTRYPOINT ["java","-jar","/spring-project.jar"]
