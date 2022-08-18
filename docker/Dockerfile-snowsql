@@ -1,0 +1,36 @@
+#GOlang image as builder
+FROM golang:1.17 AS builder
+WORKDIR WORKDIR /go/src/app
+ENV GOOS=linux
+ENV GOARCH=amd64
+RUN mkdir /output
+# cd into first directory
+RUN cd $(ls -d */|head -n 1)\
+ &&  CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -a -ldflags '-extldflags "-static"' -o /output/terraform-provider-snowflake
+
+FROM hashicorp/terraform:1.1.4 as terraform
+#Terraform image
+
+FROM amazon/aws-cli:2.0.46
+
+RUN VERSION=1.21.2 \
+    && curl -o aws-iam-authenticator https://amazon-eks.s3.us-west-2.amazonaws.com/${VERSION}/2021-07-05/bin/linux/amd64/aws-iam-authenticator \
+    && mv ./aws-iam-authenticator /usr/local/bin/ \
+    && chmod +x /usr/local/bin/aws-iam-authenticator
+
+RUN yum install -y python3 tar gzip unzip git
+COPY --from=terraform /bin/terraform /bin/terraform
+
+# Manually install Snowflake provider
+RUN  mkdir -p /root/.terraform.d/plugins
+COPY --from=builder /output/* /root/.terraform.d/plugins
+RUN chmod +x /root/.terraform.d/plugins -R
+
+# Download and install SnowSQL and then remove the installer
+RUN curl -sSf https://sfc-repo.snowflakecomputing.com/snowsql/bootstrap/1.2/linux_x86_64/snowsql-1.2.9-linux_x86_64.bash -o snowsql.bash && \
+    touch ~/.profile && \
+    SNOWSQL_DEST=/bin SNOWSQL_LOGIN_SHELL=~/.profile bash snowsql.bash && rm -f snowsql.bash
+
+COPY docker-entrypoint.sh /bin/docker-entrypoint.sh
+RUN chmod +x /bin/docker-entrypoint.sh
+ENTRYPOINT ["/bin/docker-entrypoint.sh"]
